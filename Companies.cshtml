@@ -1,0 +1,92 @@
+﻿@model List<Company>
+@{
+    ViewData["Title"] = "Group Companies";
+    var companySlugs = new[]
+    {
+        "shreeyaan-web-tech", "crystal-pro-automation", "shivam-enterprise", "tara-green-energy", "bharmal-preci-works"
+    };
+}
+
+<section class="section page-hero">
+    <div class="container">
+        <p class="eyebrow">Our group</p>
+        <h1 class="section-title">One group, five specialised businesses.</h1>
+        <p class="section-lead">
+            Shreeyan Webtech is part of a small group of businesses covering software, automation,
+            enterprise trading, clean energy, and precision engineering. Each one is run independently,
+            with its own focus and its own team. <span class="d-none d-md-inline">Tap or hover a card to see more.</span>
+        </p>
+    </div>
+</section>
+
+<section class="section pt-0">
+    <div class="container">
+        <div class="row g-4">
+            @for (var i = 0; i < Model.Count; i++)
+            {
+                var company = Model[i];
+                var slug = i < companySlugs.Length ? companySlugs[i] : $"company-{i}";
+                <div class="col-md-6 col-lg-4" data-reveal>
+                    <div class="flip-card" id="@slug" tabindex="0">
+                        <div class="flip-card__inner">
+                            <div class="flip-card__face flip-card__face--front">
+                                <div class="card-icon"><partial name="_Icon" model="@company.IconKey" /></div>
+                                <h3 class="value-card__title">@company.Name</h3>
+                                <p class="value-card__desc">@company.Tagline</p>
+                                <span class="flip-card__hint">
+                                    <partial name="_Icon" model="@("target")" /> Tap to learn more
+                                </span>
+                            </div>
+                            <div class="flip-card__face flip-card__face--back">
+                                <div>
+                                    <h3 class="flip-card__back-title">@company.Name</h3>
+                                    @if (!string.IsNullOrEmpty(company.Established))
+                                    {
+                                        <span class="flip-card__badge">@company.Established</span>
+                                    }
+                                    <p class="flip-card__back-desc">@company.Description</p>
+                                    @if (company.Highlights.Any())
+                                    {
+                                        <ul class="flip-card__highlights">
+                                            @foreach (var h in company.Highlights)
+                                            {
+                                                <li><partial name="_Icon" model="@("check")" />@h</li>
+                                            }
+                                        </ul>
+                                    }
+                                </div>
+                                @if (!string.IsNullOrEmpty(company.Url))
+                                {
+                                    <a class="company-card__link" href="@company.Url" target="_blank" rel="noopener">
+                                        Visit website <partial name="_Icon" model="@("external")" />
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="company-card__soon">
+                                        <partial name="_Icon" model="@("clock")" /> Website coming soon
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="section section--alt">
+    <div class="container">
+        <div class="cta-banner" data-reveal>
+            <div class="cta-banner__content">
+                <p class="eyebrow eyebrow--dark">Have a project in mind?</p>
+                <h2 class="cta-banner__title">Talk to the right team in the group.</h2>
+                <p class="cta-banner__text">Whichever business fits your need, we'll point you to the right people.</p>
+            </div>
+            <div class="cta-banner__actions">
+                <a class="btn btn-primary btn-lg" asp-controller="Home" asp-action="Contact">Get in touch</a>
+            </div>
+        </div>
+    </div>
+</section>

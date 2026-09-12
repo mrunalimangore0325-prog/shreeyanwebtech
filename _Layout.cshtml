@@ -1,0 +1,297 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(ViewData["Title"] != null ? $"{ViewData["Title"]} · ShreeYaan Webtech" : "ShreeYaan Webtech — Website, Software & Cyber Security Solutions")</title>
+    <meta name="description" content="ShreeYaan Webtech builds websites, special purpose software, and cyber security solutions  — fully customised around your business, not a template." />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<!--
+    body gets "has-hero-video" only on pages that render a .hero--video
+    section (currently just Home/Index). That flag flips the header
+    between the transparent-over-video start state and the normal solid
+    pill used on every other page. Set it from the view like:
+@{
+    ViewData["HasHeroVideo"] = true;
+}
+    at the top of that view's .cshtml file.
+
+    NOTE: the navbar is now ALWAYS solid/visible (on every page, at every
+    scroll position) — it no longer starts transparent over the hero
+    video. Scrolling only deepens the shadow via .is-scrolled. This fixes
+    the "navbar only shows up once you scroll" issue.
+-->
+<body class="@(ViewData["HasHeroVideo"] is bool hasHero && hasHero ? "has-hero-video" : "")">
+    <div id="preloader" class="preloader" aria-hidden="true">
+        <div class="preloader__inner">
+            <div class="preloader__mark">
+                <span class="preloader__square preloader__square--a"></span>
+                <span class="preloader__square preloader__square--b"></span>
+                <span class="preloader__square preloader__square--c"></span>
+            </div>
+            <div class="preloader__brand">ShreeYaan<span class="preloader__brand-light">Webtech</span></div>
+            <div class="preloader__bar"><span class="preloader__bar-fill"></span></div>
+            <p class="preloader__label">Loading experience&hellip;</p>
+        </div>
+    </div>
+
+    <a href="#main-content" class="skip-link">Skip to content</a>
+
+    <!-- ==========================================================================
+         Navbar.
+         Desktop: brand + inline text links; "About" and "Services" open a
+         full-width shelf panel anchored to the header itself (position:absolute,
+         left:0, width:100%), so it can never clip off-screen the way a
+         centered dropdown pinned to one trigger can on narrower desktop widths.
+         Mobile (<992px): the inline links and shelf triggers are hidden and a
+         single hamburger button opens a right-hand drawer with an accordion
+         for About/Services — one mobile surface instead of two overlapping ones.
+
+         Scroll effect: .site-header is always transparent and only controls
+         sticky positioning/spacing. .site-navbar__row is the actual visual
+         bar and is solid white at all times (on every page, at every scroll
+         position) — site.js's setScrolled() still toggles "is-scrolled",
+         which now only deepens the shadow, giving a subtle, always-visible
+         change on scroll instead of making the bar appear/disappear.
+         ========================================================================== -->
+    <header class="site-header" id="siteHeader">
+        <nav class="site-navbar">
+            <div class="container site-navbar__row">
+                <a class="site-brand" asp-controller="Home" asp-action="Index">
+                    <span class="site-brand__mark" aria-hidden="true">
+                        <span class="site-brand__square site-brand__square--back"></span>
+                        <span class="site-brand__square site-brand__square--front"></span>
+                    </span>
+                    <span class="site-brand__text">ShreeYaan<span class="site-brand__text-light">Webtech</span></span>
+                </a>
+
+                <ul class="site-nav" role="navigation" aria-label="Primary">
+                    <li class="site-nav__item">
+                        <a class="site-nav__link" asp-controller="Home" asp-action="Index">Home</a>
+                    </li>
+                    <li class="site-nav__item">
+                        <button class="site-nav__link" type="button" data-panel-trigger="about" aria-haspopup="true" aria-expanded="false">
+                            About
+                            <svg class="site-nav__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+                        </button>
+                    </li>
+                    <li class="site-nav__item">
+                        <button class="site-nav__link" type="button" data-panel-trigger="services" aria-haspopup="true" aria-expanded="false">
+                            Services
+                            <svg class="site-nav__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+                        </button>
+                    </li>
+                    
+                    <li class="site-nav__item">
+                        <a class="site-nav__link" asp-controller="Home" asp-action="Careers">Careers</a>
+                    </li>
+                </ul>
+
+                <div class="site-navbar__actions">
+                    <a class="nav-cta" asp-controller="Home" asp-action="Contact">
+                        <span>Start your project</span>
+                        <span class="nav-cta__icon" aria-hidden="true"><partial name="_Icon" model="@("arrow")" /></span>
+                    </a>
+                    <button class="nav-toggle" id="navToggle" type="button" aria-controls="mobileDrawer" aria-expanded="false" aria-label="Open menu">
+                        <span class="nav-toggle__bars" aria-hidden="true"><span></span><span></span><span></span></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Full-width shelf panels, desktop only (see .nav-panel media query) -->
+            <div class="nav-panel" data-panel="about" aria-hidden="true">
+                <div class="container nav-panel__grid">
+                    <div>
+                        <p class="nav-panel__eyebrow">Company</p>
+                        <a class="nav-panel__link" asp-controller="Home" asp-action="About">About us<span>Who we are and what we stand for</span></a>
+                        <a class="nav-panel__link" asp-controller="Home" asp-action="Careers">Careers<span>Open roles at ShreeYaan Webtech</span></a>
+                    </div>
+                    <div>
+                        <p class="nav-panel__eyebrow">How we work</p>
+                        <a class="nav-panel__link" asp-controller="Home" asp-action="Companies">Group companies<span>The businesses we work alongside</span></a>
+                    </div>
+                    <div class="nav-panel__aside">
+                        <p class="nav-panel__eyebrow">Get in touch</p>
+                        <a class="nav-panel__contact" href="mailto:shreeyaanwebtech@gmail.com"><partial name="_Icon" model="@("mail")" /> shreeyaanwebtech@gmail.com</a>
+                        <a class="nav-panel__contact" href="tel:+91 86249 68613"><partial name="_Icon" model="@("phone")" />+91 86249 68613</a>
+                    </div>
+                </div>
+            </div>
+            <div class="nav-panel" data-panel="services" aria-hidden="true">
+                <div class="container nav-panel__grid">
+                    <div>
+                        <p class="nav-panel__eyebrow">What we build</p>
+                        <a class="nav-panel__link" asp-controller="Home" asp-action="Services">Websites &amp; web apps<span>, custom-built</span></a>
+                        <a class="nav-panel__link" asp-controller="Home" asp-action="Services">Cyber security<span>Audits, hardening, response</span></a>
+                    </div>
+                  
+                    </div>
+                    <div class="nav-panel__aside">
+                        <p class="nav-panel__eyebrow">Get in touch</p>
+                        <a class="nav-panel__contact" href="mailto:shreeyaanwebtech@gmail.com"><partial name="_Icon" model="@("mail")" /> shreeyaanwebtech@gmail.com</a>
+                        <a class="nav-panel__contact" href="tel:+91 86249 68613"><partial name="_Icon" model="@("phone")" /> +91 86249 68613</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Mobile drawer: single right-hand slide-in surface for <992px.
+         Lives outside <header> for the same reason the old sitemap overlay
+         did — backdrop-filter on the header creates a containing block for
+         fixed descendants, which would trap a fixed-position drawer inside
+         the header's own box instead of covering the screen. -->
+    <div class="mobile-drawer" id="mobileDrawer" aria-hidden="true">
+        <div class="mobile-drawer__scrim" data-drawer-close></div>
+        <div class="mobile-drawer__panel">
+            <div class="mobile-drawer__head">
+                <a class="site-brand" style="color:var(--white);" asp-controller="Home" asp-action="Index">
+                    <span class="site-brand__mark" aria-hidden="true">
+                        <span class="site-brand__square site-brand__square--back"></span>
+                        <span class="site-brand__square site-brand__square--front"></span>
+                    </span>
+                    <span class="site-brand__text" style="color:var(--white);">ShreeYaan<span class="site-brand__text-light">Webtech</span></span>
+                </a>
+                <button class="mobile-drawer__close" id="mobileDrawerClose" type="button" aria-label="Close menu">
+                    <partial name="_Icon" model="@("close")" />
+                </button>
+            </div>
+
+            <ul class="mobile-drawer__list">
+                <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+
+                <li class="mobile-drawer__group">
+                    <button type="button" class="mobile-drawer__group-trigger" data-accordion-trigger="about" aria-expanded="false">
+                        About
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+                    </button>
+                    <div class="mobile-drawer__sublist" data-accordion-panel="about">
+                        <a asp-controller="Home" asp-action="About">About us</a>
+                        <a asp-controller="Home" asp-action="Careers">Careers</a>
+                        <a asp-controller="Home" asp-action="Companies">Group companies</a>
+                    </div>
+                </li>
+
+                <li class="mobile-drawer__group">
+                    <button type="button" class="mobile-drawer__group-trigger" data-accordion-trigger="services" aria-expanded="false">
+                        Services
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+                    </button>
+                    <div class="mobile-drawer__sublist" data-accordion-panel="services">
+                        <a asp-controller="Home" asp-action="Services">Websites &amp; web apps</a>
+                        <a asp-controller="Home" asp-action="Services">Cyber security</a>
+                        
+                    </div>
+                </li>
+
+                <li><a asp-controller="Home" asp-action="Portfolio">Portfolio</a></li>
+                <li><a asp-controller="Home" asp-action="Careers">Careers</a></li>
+                <li><a asp-controller="Home" asp-action="Contact">Contact</a></li>
+            </ul>
+
+            <a class="mobile-drawer__cta" asp-controller="Home" asp-action="Contact">
+                <span>Start your project</span>
+                <span class="nav-cta__icon" aria-hidden="true"><partial name="_Icon" model="@("arrow")" /></span>
+            </a>
+
+            <ul class="mobile-drawer__contact">
+                <li><a href="mailto:shreeyaanwebtech@gmail.com"><partial name="_Icon" model="@("mail")" /> 
+                    
+                    shreeyaanwebtech@gmail.com</a></li>
+                <li><a href="tel:+91 86249 68613"><partial name="_Icon" model="@("phone")" />+91 86249 68613</a></li>
+                <li><span><partial name="_Icon" model="@("pin")" /> Pune, Maharashtra, India</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <main class="site-main" id="main-content">
+        @RenderBody()
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-brand-col">
+                    <a class="site-brand site-brand--footer" asp-controller="Home" asp-action="Index">
+                        <span class="site-brand__mark" aria-hidden="true">
+                            <span class="site-brand__square site-brand__square--back"></span>
+                            <span class="site-brand__square site-brand__square--front"></span>
+                        </span>
+                        <span class="site-brand__text">ShreeYaan<span class="site-brand__text-light">Webtech</span></span>
+                    </a>
+                    <p class="footer-tagline">
+                        We design and build modern websites and web applications —
+                        scoped around your business, not a template.
+                    </p>
+                </div>
+
+                <div class="footer-links-col">
+                    <h6 class="footer-heading">Company</h6>
+                    <ul class="footer-links">
+                        <li><a asp-controller="Home" asp-action="About">About</a></li>
+
+                        <li><a asp-controller="Home" asp-action="Portfolio">Portfolio</a></li>
+                        <li><a asp-controller="Home" asp-action="Careers">Careers</a></li>
+                        <li><a asp-controller="Home" asp-action="Contact">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-links-col">
+                    <h6 class="footer-heading">What We Do</h6>
+                    <ul class="footer-links">
+                        <li><a asp-controller="Home" asp-action="Services">Website Development</a></li>
+                        <li><a asp-controller="Home" asp-action="Services">Custom Web Applications</a></li>
+                        <li><a asp-controller="Home" asp-action="Services">Cyber Security Solutions</a></li>
+                        <li><a asp-controller="Home" asp-action="Services">Special Purpose Software</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-links-col">
+                    <h6 class="footer-heading">Group Companies</h6>
+                    <ul class="footer-links">
+                        <li><a asp-controller="Home" asp-action="Companies">View All Companies</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-links-col footer-links-col--contact">
+                    <h6 class="footer-heading">Get in touch</h6>
+                    <ul class="footer-contact">
+                        <li>
+                            <span class="footer-contact__icon"><partial name="_Icon" model="@("mail")" /></span>
+                            <a href="mailto:shreeyaanwebtech@gmail.com">shreeyaanwebtech@gmail.com</a>
+                        </li>
+                        <li>
+                            <span class="footer-contact__icon"><partial name="_Icon" model="@("phone")" /></span>
+                            <a href="tel:+91 86249 68613">+91 86249 68613</a>
+                        </li>
+                        <li>
+                            <span class="footer-contact__icon"><partial name="_Icon" model="@("pin")" /></span>
+                            <span>Pune, Maharashtra, India</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <span>© @DateTime.Now.Year ShreeYaan Webtech. All rights reserved.</span>
+                <div class="footer-bottom__links">
+                    <a asp-controller="Home" asp-action="Privacy">Privacy Policy</a>
+                    <a asp-controller="Home" asp-action="Privacy">Terms &amp; Conditions</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
