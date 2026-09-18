@@ -4,6 +4,4 @@ obj/
 .vscode/
 *.user
 *.suo
-wwwroot/videos/*.mp4
-wwwroot/videos/*.webm
 appsettings.Development.json
