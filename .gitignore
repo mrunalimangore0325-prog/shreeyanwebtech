@@ -19,7 +19,3 @@ appsettings.Development.json
 appsettings.*.local.json
 *.env
 .env
-
-# Large media (host these in Cloud Storage/CDN instead of git)
-wwwroot/videos/*.mp4
-wwwroot/videos/*.webm
