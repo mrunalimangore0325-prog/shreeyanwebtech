@@ -1,5 +1,7 @@
 ﻿using System.Net;
 using System.Net.Mail;
+using System.Net.Sockets;
+using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Shreeyan.Models;
@@ -34,7 +36,8 @@ namespace Shreeyan.Services
                 message.ReplyToList.Add(new MailAddress(model.Email, model.Name));
             }
 
-            using var client = new SmtpClient(_settings.SmtpServer, _settings.SmtpPort)
+            var smtpHost = await ResolveIPv4HostAsync(_settings.SmtpServer);
+            using var client = new SmtpClient(smtpHost, _settings.SmtpPort)
             {
                 EnableSsl = _settings.EnableSsl,
                 Credentials = new NetworkCredential(_settings.SenderEmail, _settings.SenderPassword)
@@ -79,7 +82,8 @@ namespace Shreeyan.Services
                 message.Attachments.Add(attachment);
             }
 
-            using var client = new SmtpClient(_settings.SmtpServer, _settings.SmtpPort)
+            var smtpHost = await ResolveIPv4HostAsync(_settings.SmtpServer);
+            using var client = new SmtpClient(smtpHost, _settings.SmtpPort)
             {
                 EnableSsl = _settings.EnableSsl,
                 Credentials = new NetworkCredential(_settings.SenderEmail, _settings.SenderPassword)
@@ -139,6 +143,13 @@ namespace Shreeyan.Services
                  Message:
                  {model.Message}
                  """;
+        }
+
+        private static async Task<string> ResolveIPv4HostAsync(string hostName)
+        {
+            var addresses = await Dns.GetHostAddressesAsync(hostName);
+            var ipv4 = addresses.FirstOrDefault(a => a.AddressFamily == AddressFamily.InterNetwork);
+            return ipv4?.ToString() ?? hostName;
         }
     }
 }
