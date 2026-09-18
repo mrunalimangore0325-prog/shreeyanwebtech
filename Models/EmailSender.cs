@@ -1,7 +1,7 @@
-﻿using System.Net;
-using System.Net.Mail;
-using System.Net.Sockets;
-using System.Linq;
+﻿using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Shreeyan.Models;
@@ -10,100 +10,109 @@ namespace Shreeyan.Services
 {
     public class EmailSender : IEmailSender
     {
+        private const string BrevoSendEndpoint = "https://api.brevo.com/v3/smtp/email";
+
         private readonly EmailSettings _settings;
+        private readonly HttpClient _httpClient;
         private readonly ILogger<EmailSender> _logger;
 
-        public EmailSender(IOptions<EmailSettings> settings, ILogger<EmailSender> logger)
+        public EmailSender(IOptions<EmailSettings> settings, HttpClient httpClient, ILogger<EmailSender> logger)
         {
             _settings = settings.Value;
+            _httpClient = httpClient;
             _logger = logger;
         }
 
         public async Task SendContactMessageAsync(ContactViewModel model)
         {
-            using var message = new MailMessage
+            var payload = new BrevoEmailRequest
             {
-                From = new MailAddress(_settings.SenderEmail, _settings.SenderName),
+                Sender = new BrevoContact { Email = _settings.SenderEmail, Name = _settings.SenderName },
+                To = new[] { new BrevoContact { Email = _settings.OwnerEmail } },
+                ReplyTo = !string.IsNullOrWhiteSpace(model.Email)
+                    ? new BrevoContact { Email = model.Email, Name = model.Name }
+                    : null,
                 Subject = $"New enquiry — {model.ProjectType} ({model.Name})",
-                Body = BuildContactBody(model),
-                IsBodyHtml = false
+                TextContent = BuildContactBody(model)
             };
 
-            message.To.Add(_settings.OwnerEmail);
-
-            if (!string.IsNullOrWhiteSpace(model.Email))
-            {
-                message.ReplyToList.Add(new MailAddress(model.Email, model.Name));
-            }
-
-            var smtpHost = await ResolveIPv4HostAsync(_settings.SmtpServer);
-            using var client = new SmtpClient(smtpHost, _settings.SmtpPort)
-            {
-                EnableSsl = _settings.EnableSsl,
-                Credentials = new NetworkCredential(_settings.SenderEmail, _settings.SenderPassword)
-            };
-
-            try
-            {
-                await client.SendMailAsync(message);
-                _logger.LogInformation("Contact email sent for {Email}", model.Email);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to send contact email for {Email}", model.Email);
-                throw;
-            }
+            await SendViaBrevoAsync(payload, $"contact email for {model.Email}");
         }
 
         public async Task SendCareerApplicationAsync(CareerApplicationViewModel model, IFormFile? resumeFile)
         {
-            using var message = new MailMessage
+            var payload = new BrevoEmailRequest
             {
-                From = new MailAddress(_settings.SenderEmail, _settings.SenderName),
+                Sender = new BrevoContact { Email = _settings.SenderEmail, Name = _settings.SenderName },
+                To = new[] { new BrevoContact { Email = _settings.OwnerEmail } },
+                ReplyTo = !string.IsNullOrWhiteSpace(model.Email)
+                    ? new BrevoContact { Email = model.Email, Name = model.Name }
+                    : null,
                 Subject = $"New career application — {model.RoleInterest} ({model.Name})",
-                Body = BuildCareerBody(model, resumeFile),
-                IsBodyHtml = false
+                TextContent = BuildCareerBody(model, resumeFile)
             };
 
-            message.To.Add(_settings.OwnerEmail);
-
-            if (!string.IsNullOrWhiteSpace(model.Email))
-            {
-                message.ReplyToList.Add(new MailAddress(model.Email, model.Name));
-            }
-
-            // Attach the uploaded resume, if any. The stream is opened here and
-            // disposed via the Attachment/MailMessage lifecycle below.
-            Stream? resumeStream = null;
+            // Brevo expects attachments as base64 content, not a raw stream.
             if (resumeFile is { Length: > 0 })
             {
-                resumeStream = resumeFile.OpenReadStream();
-                var attachment = new Attachment(resumeStream, resumeFile.FileName, resumeFile.ContentType);
-                message.Attachments.Add(attachment);
+                await using var stream = resumeFile.OpenReadStream();
+                using var memoryStream = new MemoryStream();
+                await stream.CopyToAsync(memoryStream);
+
+                payload.Attachment = new[]
+                {
+                    new BrevoAttachment
+                    {
+                        Name = resumeFile.FileName,
+                        Content = Convert.ToBase64String(memoryStream.ToArray())
+                    }
+                };
             }
 
-            var smtpHost = await ResolveIPv4HostAsync(_settings.SmtpServer);
-            using var client = new SmtpClient(smtpHost, _settings.SmtpPort)
+            await SendViaBrevoAsync(payload, $"career application email for {model.Email}");
+        }
+
+        private async Task SendViaBrevoAsync(BrevoEmailRequest payload, string logContext)
+        {
+            if (string.IsNullOrWhiteSpace(_settings.BrevoApiKey))
             {
-                EnableSsl = _settings.EnableSsl,
-                Credentials = new NetworkCredential(_settings.SenderEmail, _settings.SenderPassword)
+                _logger.LogError("Brevo API key is not configured. Cannot send {LogContext}.", logContext);
+                throw new InvalidOperationException("Email sending is not configured (missing Brevo API key).");
+            }
+
+            using var request = new HttpRequestMessage(HttpMethod.Post, BrevoSendEndpoint)
+            {
+                Content = JsonContent.Create(payload, options: JsonOptions)
             };
+            request.Headers.Add("api-key", _settings.BrevoApiKey);
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             try
             {
-                await client.SendMailAsync(message);
-                _logger.LogInformation("Career application email sent for {Email}", model.Email);
+                using var response = await _httpClient.SendAsync(request);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var body = await response.Content.ReadAsStringAsync();
+                    _logger.LogError(
+                        "Brevo API returned {StatusCode} while sending {LogContext}. Response: {Body}",
+                        response.StatusCode, logContext, body);
+                    throw new InvalidOperationException($"Brevo API request failed with status {response.StatusCode}.");
+                }
+
+                _logger.LogInformation("Sent {LogContext} via Brevo.", logContext);
             }
-            catch (Exception ex)
+            catch (HttpRequestException ex)
             {
-                _logger.LogError(ex, "Failed to send career application email for {Email}", model.Email);
+                _logger.LogError(ex, "Network error while sending {LogContext} via Brevo.", logContext);
                 throw;
             }
-            finally
-            {
-                resumeStream?.Dispose();
-            }
         }
+
+        private static readonly JsonSerializerOptions JsonOptions = new()
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+        };
 
         private static string BuildContactBody(ContactViewModel model)
         {
@@ -145,11 +154,46 @@ namespace Shreeyan.Services
                  """;
         }
 
-        private static async Task<string> ResolveIPv4HostAsync(string hostName)
+        // ---- Brevo API request DTOs ----
+
+        private class BrevoEmailRequest
         {
-            var addresses = await Dns.GetHostAddressesAsync(hostName);
-            var ipv4 = addresses.FirstOrDefault(a => a.AddressFamily == AddressFamily.InterNetwork);
-            return ipv4?.ToString() ?? hostName;
+            [JsonPropertyName("sender")]
+            public BrevoContact Sender { get; set; } = new();
+
+            [JsonPropertyName("to")]
+            public BrevoContact[] To { get; set; } = Array.Empty<BrevoContact>();
+
+            [JsonPropertyName("replyTo")]
+            public BrevoContact? ReplyTo { get; set; }
+
+            [JsonPropertyName("subject")]
+            public string Subject { get; set; } = string.Empty;
+
+            [JsonPropertyName("textContent")]
+            public string TextContent { get; set; } = string.Empty;
+
+            [JsonPropertyName("attachment")]
+            public BrevoAttachment[]? Attachment { get; set; }
+        }
+
+        private class BrevoContact
+        {
+            [JsonPropertyName("email")]
+            public string Email { get; set; } = string.Empty;
+
+            [JsonPropertyName("name")]
+            public string? Name { get; set; }
+        }
+
+        private class BrevoAttachment
+        {
+            [JsonPropertyName("name")]
+            public string Name { get; set; } = string.Empty;
+
+            /// <summary>Base64-encoded file content.</summary>
+            [JsonPropertyName("content")]
+            public string Content { get; set; } = string.Empty;
         }
     }
 }

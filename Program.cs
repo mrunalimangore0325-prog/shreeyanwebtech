@@ -7,9 +7,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-// Contact form email delivery
+// Contact form email delivery (sent via Brevo's HTTPS transactional API,
+// not SMTP — many hosts, including Render's free tier, block outbound SMTP)
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
-builder.Services.AddScoped<IEmailSender, EmailSender>();
+builder.Services.AddHttpClient<IEmailSender, EmailSender>();
 
 var app = builder.Build();
 
