@@ -1,0 +1,25 @@
+# Build output
+bin/
+obj/
+out/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local secrets / environment overrides — never commit real credentials
+appsettings.Development.json
+appsettings.*.local.json
+*.env
+.env
+
+# Large media (host these in Cloud Storage/CDN instead of git)
+wwwroot/videos/*.mp4
+wwwroot/videos/*.webm

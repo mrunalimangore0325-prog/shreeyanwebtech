@@ -1,0 +1,155 @@
+﻿@model ContactViewModel
+@{
+    ViewData["Title"] = "Contact";
+    var showSuccess = TempData["ContactSuccess"] != null;
+    var showError = TempData["ContactError"] != null;
+}
+
+<section class="section page-hero">
+    <div class="container">
+        <p class="eyebrow">Contact</p>
+        <h1 class="section-title">Let's Build Something Great.</h1>
+        <p class="section-lead">Tell us what you're trying to build — we'll reply with a straight answer, usually within one business day.</p>
+    </div>
+</section>
+
+<section class="section pt-0">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-7">
+                <div class="contact-card">
+                    @if (showSuccess)
+                    {
+                        <div class="alert-success-banner">
+                            <partial name="_Icon" model="@("check")" />
+                            <span>Thanks — your message is in. We'll get back to you within one business day.</span>
+                        </div>
+                    }
+                    @if (showError)
+                    {
+                        <div class="alert-success-banner" style="background: rgba(220, 53, 69, 0.08); border-color: rgba(220, 53, 69, 0.3); color: #b02a37;">
+                            <partial name="_Icon" model="@("check")" />
+                            <span>Sorry — something went wrong sending your message. Please email us directly at <a href="mailto:shreeyaanwebtech@gmail.com">shreeyaanwebtech@gmail.com</a>.</span>
+                        </div>
+                    }
+                    <form asp-controller="Home" asp-action="Contact" method="post" novalidate>
+                        <div class="contact-card__head">
+                            <span class="contact-card__head-icon"><partial name="_Icon" model="@("mail")" /></span>
+                            <div>
+                                <h3 class="contact-card__head-title">Tell us about your project</h3>
+                                <p class="contact-card__head-desc">We reply within one business day, usually faster.</p>
+                            </div>
+                        </div>
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="field-group">
+                            <p class="field-group__title">Your details</p>
+                            <div class="form-row">
+                                <div class="field">
+                                    <label asp-for="Name" class="form-label"></label>
+                                    <input asp-for="Name" class="form-control" placeholder="Your name" />
+                                    <span asp-validation-for="Name" class="text-danger small"></span>
+                                </div>
+                                <div class="field">
+                                    <label asp-for="Email" class="form-label"></label>
+                                    <input asp-for="Email" class="form-control" placeholder="you@company.com" />
+                                    <span asp-validation-for="Email" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="form-row" style="margin-top: 1.25rem;">
+                                <div class="field">
+                                    <label asp-for="Phone" class="form-label"><span class="field-optional">(optional)</span></label>
+                                    <input asp-for="Phone" class="form-control" placeholder="Your phone number" />
+                                    <span asp-validation-for="Phone" class="text-danger small"></span>
+                                </div>
+                                <div class="field">
+                                    <label asp-for="Company" class="form-label"><span class="field-optional">(optional)</span></label>
+                                    <input asp-for="Company" class="form-control" placeholder="Your company or business name" />
+                                    <span asp-validation-for="Company" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field-group">
+                            <p class="field-group__title">Your project</p>
+                            <div class="field" style="margin-bottom: 1.25rem;">
+                                <label asp-for="ProjectType" class="form-label"></label>
+                                <select asp-for="ProjectType" class="form-select">
+                                    <option value="">Select a project type</option>
+                                    <option value="Business Website">Business Website</option>
+                                    <option value="E-Commerce Store">E-Commerce Store</option>
+                                    <option value="Custom Web Application">Custom Web Application</option>
+                                    <option value="Portfolio / Professional Website">Portfolio / Professional Website</option>
+                                    <option value="Website Maintenance">Website Maintenance</option>
+                                    <option value="Not sure yet">Not sure yet</option>
+                                </select>
+                                <span asp-validation-for="ProjectType" class="text-danger small"></span>
+                            </div>
+                            <div class="field">
+                                <label asp-for="Message" class="form-label"></label>
+                                <textarea asp-for="Message" class="form-control" rows="5" placeholder="What are you looking to build?"></textarea>
+                                <span asp-validation-for="Message" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-submit">
+                            <span class="form-submit__note">
+                                <partial name="_Icon" model="@("check")" />
+                                No spam — just a straight answer.
+                            </span>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                Send Inquiry
+                                <partial name="_Icon" model="@("arrow")" />
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="contact-info">
+                    <h3 class="contact-info__title">Other ways to reach us</h3>
+                    <ul class="contact-info__list">
+                        <li>
+                            <span class="contact-info__icon"><partial name="_Icon" model="@("mail")" /></span>
+                            <span>
+                                <span class="contact-info__label">Email</span>
+                                <a class="contact-info__value" href="mailto:hshreeyaanwebtech@gmail.com">shreeyaanwebtech@gmail.com</a>
+                            </span>
+                        </li>
+                        <li>
+                            <span class="contact-info__icon"><partial name="_Icon" model="@("phone")" /></span>
+                            <span>
+                                <span class="contact-info__label">Phone</span>
+                                <a class="contact-info__value" href="tel:+91 86249 68613">+91 86249 68613</a>
+                            </span>
+                        </li>
+                        <li>
+                            <span class="contact-info__icon"><partial name="_Icon" model="@("pin")" /></span>
+                            <span>
+                                <span class="contact-info__label">Location</span>
+                                <span class="contact-info__value">Pune, Maharashtra, India</span>
+                            </span>
+                        </li>
+                        <li>
+                            <span class="contact-info__icon"><partial name="_Icon" model="@("clock")" /></span>
+                            <span>
+                                <span class="contact-info__label">Hours</span>
+                                <span class="contact-info__value">Mon–Sat, 10am–7pm IST</span>
+                            </span>
+                        </li>
+                    </ul>
+                    <div class="contact-info__note">
+                        <p><strong style="color: var(--ink);">Response time.</strong> We reply to every enquiry within one business day — usually faster.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

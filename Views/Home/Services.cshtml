@@ -1,0 +1,58 @@
+﻿@model List<ServiceItem>
+@{
+    ViewData["Title"] = "Services";
+    var serviceSlugs = new[]
+    {
+        "website-development", "business-websites", "ecommerce-development", "custom-web-applications",
+        "portfolio-professional-sites", "website-maintenance", "cyber-security-solutions", "special-purpose-software",
+        "meta-ads-management"
+    };
+}
+
+<section class="section page-hero">
+    <div class="container">
+        <p class="eyebrow">What we do</p>
+        <h1 class="section-title">Extraordinary solutions, fully customised to your business.</h1>
+        <p class="section-lead">We don't work off a fixed package. From websites to special purpose software and cyber security, every project is scoped around what your business actually needs — tell us the problem and we'll help you figure out which service fits.</p>
+    </div>
+</section>
+
+<section class="section pt-0">
+    <div class="container">
+        <div class="row g-4">
+            @for (var i = 0; i < Model.Count; i++)
+            {
+                var service = Model[i];
+                var slug = i < serviceSlugs.Length ? serviceSlugs[i] : $"service-{i}";
+                <div class="col-md-6 col-lg-4" data-reveal>
+                    <div class="service-card" id="@slug">
+                        <div class="card-icon"><partial name="_Icon" model="@service.IconKey" /></div>
+                        <h3 class="service-card__title">@service.Title</h3>
+                        <p class="service-card__desc">@service.Description</p>
+                        <ul class="service-card__list">
+                            @foreach (var item in service.Includes)
+                            {
+                                <li>@item</li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="section section--alt">
+    <div class="container">
+        <div class="cta-banner" data-reveal>
+            <div class="cta-banner__content">
+                <p class="eyebrow eyebrow--dark">Not sure which fits?</p>
+                <h2 class="cta-banner__title">Tell us the problem, not the package.</h2>
+                <p class="cta-banner__text">Describe what you're trying to build and we'll help you scope it.</p>
+            </div>
+            <div class="cta-banner__actions">
+                <a class="btn btn-primary btn-lg" asp-controller="Home" asp-action="Contact">Describe Your Project</a>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,227 @@
+﻿@model CareerApplicationViewModel
+@{
+    ViewData["Title"] = "Careers";
+    var showSuccess = TempData["CareerSuccess"] != null;
+    var showError = TempData["CareerError"] != null;
+}
+
+<section class="section page-hero">
+    <div class="container">
+        <p class="eyebrow">Careers</p>
+        <h1 class="section-title">Build extraordinary things with us.</h1>
+        <p class="section-lead">
+            We're a small, hands-on team working on high-profile projects across web development,
+            special purpose software, and cyber security. If you'd rather build real products than
+            sit through process, we'd like to hear from you.
+        </p>
+    </div>
+</section>
+
+<section class="section pt-0">
+    <div class="container">
+        <div class="row g-4" data-reveal>
+            <div class="col-md-4">
+                <div class="value-card">
+                    <div class="card-icon"><partial name="_Icon" model="@("code")" /></div>
+                    <h3 class="value-card__title">Development</h3>
+                    <p class="value-card__desc">Web development, custom applications, and full-stack  work.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="value-card">
+                    <div class="card-icon"><partial name="_Icon" model="@("lock")" /></div>
+                    <h3 class="value-card__title">Cyber Security</h3>
+                    <p class="value-card__desc">Security audits, vulnerability testing, and ongoing protection for client systems.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="value-card">
+                    <div class="card-icon"><partial name="_Icon" model="@("layout")" /></div>
+                    <h3 class="value-card__title">Design</h3>
+                    <p class="value-card__desc">UI/UX design for premium, business-focused digital products.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section--alt">
+    <div class="container">
+        <div class="section-head section-head--center" data-reveal>
+            <p class="eyebrow" style="justify-content:center;">Open roles</p>
+            <h2 class="section-title">Apply anytime — we're always looking.</h2>
+            <p class="section-lead">
+                We review applications on a rolling basis. Fill out the form below and tell us the kind of work
+                you want to do — we'll reach out when there's a fit.
+            </p>
+        </div>
+
+        <div class="row g-5">
+            <div class="col-lg-7">
+                <div class="contact-card">
+                    @if (showSuccess)
+                    {
+                        <div class="alert-success-banner">
+                            <partial name="_Icon" model="@("check")" />
+                            <span>Thanks — your application is in. We'll get back to you if there's a fit.</span>
+                        </div>
+                    }
+                    @if (showError)
+                    {
+                        <div class="alert-success-banner" style="background: rgba(220, 53, 69, 0.08); border-color: rgba(220, 53, 69, 0.3); color: #b02a37;">
+                            <partial name="_Icon" model="@("check")" />
+                            <span>Sorry — something went wrong sending your application. Please email us directly at <a href="mailto:shreeyaanwebtech@gmail.com">shreeyaanwebtech@gmail.com</a>.</span>
+                        </div>
+                    }
+                    <form asp-controller="Home" asp-action="Careers" method="post" enctype="multipart/form-data" novalidate>
+                        <div class="contact-card__head">
+                            <span class="contact-card__head-icon"><partial name="_Icon" model="@("briefcase")" /></span>
+                            <div>
+                                <h3 class="contact-card__head-title">Application details</h3>
+                                <p class="contact-card__head-desc">Takes about 2 minutes. We read every one.</p>
+                            </div>
+                        </div>
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="field-group">
+                            <p class="field-group__title">Contact info</p>
+                            <div class="form-row">
+                                <div class="field">
+                                    <label asp-for="Name" class="form-label"></label>
+                                    <input asp-for="Name" class="form-control" placeholder="Your name" />
+                                    <span asp-validation-for="Name" class="text-danger small"></span>
+                                </div>
+                                <div class="field">
+                                    <label asp-for="Email" class="form-label"></label>
+                                    <input asp-for="Email" class="form-control" placeholder="you@example.com" />
+                                    <span asp-validation-for="Email" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="form-row" style="margin-top: 1.25rem;">
+                                <div class="field">
+                                    <label asp-for="Phone" class="form-label"><span class="field-optional">(optional)</span></label>
+                                    <input asp-for="Phone" class="form-control" placeholder="Your phone number" />
+                                    <span asp-validation-for="Phone" class="text-danger small"></span>
+                                </div>
+                                <div class="field">
+                                    <label asp-for="Experience" class="form-label"><span class="field-optional">(optional)</span></label>
+                                    <input asp-for="Experience" class="form-control" placeholder="e.g. 2 years / Fresher" />
+                                    <span asp-validation-for="Experience" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field-group">
+                            <p class="field-group__title">What you're looking for</p>
+                            <div class="field">
+                                <label asp-for="RoleInterest" class="form-label"></label>
+                                <select asp-for="RoleInterest" class="form-select">
+                                    <option value="">Select an area</option>
+                                    <option value="Development">Development</option>
+                                    <option value="Cyber Security">Cyber Security</option>
+                                    <option value="Design">Design</option>
+                                    <option value="Special Purpose Software">Special Purpose Software</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <span asp-validation-for="RoleInterest" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="field-group">
+                            <p class="field-group__title">Show us your work</p>
+                            <div class="field" style="margin-bottom: 1.25rem;">
+                                <label asp-for="ProfileUrl" class="form-label"><span class="field-optional">(optional)</span></label>
+                                <input asp-for="ProfileUrl" class="form-control" placeholder="Link to your resume, LinkedIn, or portfolio" />
+                                <span asp-validation-for="ProfileUrl" class="text-danger small"></span>
+                            </div>
+                            <div class="field">
+                                <label asp-for="ResumeFile" class="form-label"><span class="field-optional">(optional if you added a link above)</span></label>
+                                <label class="file-drop" id="resumeDropLabel">
+                                    <span class="file-drop__icon"><partial name="_Icon" model="@("arrow")" /></span>
+                                    <span class="file-drop__text">
+                                        <span class="file-drop__label" id="resumeFileLabel">Choose a PDF file</span>
+                                        <span class="file-drop__hint">PDF only, up to 5 MB</span>
+                                    </span>
+                                    <input asp-for="ResumeFile" type="file" accept="application/pdf" />
+                                </label>
+                                <span asp-validation-for="ResumeFile" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+
+                        <div class="field-group">
+                            <p class="field-group__title">About you</p>
+                            <div class="field">
+                                <label asp-for="Message" class="form-label"></label>
+                                <textarea asp-for="Message" class="form-control" rows="5" placeholder="Tell us a bit about yourself and what you're looking for."></textarea>
+                                <span asp-validation-for="Message" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-submit">
+                            <span class="form-submit__note">
+                                <partial name="_Icon" model="@("check")" />
+                                We reply if there's a fit, usually within a few days.
+                            </span>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                Submit Application
+                                <partial name="_Icon" model="@("arrow")" />
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="contact-info">
+                    <h3 class="contact-info__title">Prefer to email us?</h3>
+                    <ul class="contact-info__list">
+                        <li>
+                            <span class="contact-info__icon"><partial name="_Icon" model="@("mail")" /></span>
+                            <span>
+                                <span class="contact-info__label">Email</span>
+                                <a class="contact-info__value" href="mailto:shreeyaanwebtech@gmail.com?subject=Career%20Enquiry">shreeyaanwebtech@gmail.com</a>
+                            </span>
+                        </li>
+                        <li>
+                            <span class="contact-info__icon"><partial name="_Icon" model="@("phone")" /></span>
+                            <span>
+                                <span class="contact-info__label">Phone</span>
+                                <a class="contact-info__value" href="tel:+91 86249 68613">+91 86249 68613</a>
+                            </span>
+                        </li>
+                        <li>
+                            <span class="contact-info__icon"><partial name="_Icon" model="@("pin")" /></span>
+                            <span>
+                                <span class="contact-info__label">Location</span>
+                                <span class="contact-info__value">Pune, Maharashtra, India</span>
+                            </span>
+                        </li>
+                    </ul>
+                    <div class="contact-info__note">
+                        <p><strong style="color: var(--ink);">Response time.</strong> We review every application and reply if there's a fit for current or upcoming work.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        (function () {
+            var input = document.querySelector('#resumeDropLabel input[type="file"]');
+            var label = document.getElementById('resumeFileLabel');
+            if (input && label) {
+                input.addEventListener('change', function () {
+                    label.textContent = input.files && input.files.length
+                        ? input.files[0].name
+                        : 'Choose a PDF file';
+                });
+            }
+        })();
+    </script>
+}

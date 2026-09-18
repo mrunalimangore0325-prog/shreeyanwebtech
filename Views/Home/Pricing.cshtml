@@ -1,0 +1,56 @@
+﻿@model List<PricingPlan>
+@{
+    ViewData["Title"] = "Pricing";
+}
+
+<section class="section page-hero">
+    <div class="container">
+        <p class="tag-label">&lt;pricing&gt;</p>
+        <h1 class="section-title">Reasonable, upfront pricing</h1>
+        <p class="section-lead">These are starting points — every quote is scoped to your project before we begin. No surprise invoices.</p>
+    </div>
+</section>
+
+<section class="section pt-0">
+    <div class="container">
+        <div class="row g-4 align-items-start">
+            @foreach (var plan in Model)
+            {
+                <div class="col-lg-4">
+                    <div class="pricing-card @(plan.Highlighted ? "pricing-card--highlighted" : "")">
+                        @if (plan.Highlighted)
+                        {
+                            <span class="pricing-card__badge">Most popular</span>
+                        }
+                        <h3 class="pricing-card__name">@plan.Name</h3>
+                        <p class="pricing-card__tagline">@plan.Tagline</p>
+                        <div class="pricing-card__price">
+                            <span class="pricing-card__amount">@plan.Price</span>
+                            <span class="pricing-card__period">/ @plan.Period</span>
+                        </div>
+                        <ul class="pricing-card__features">
+                            @foreach (var feature in plan.Features)
+                            {
+                                <li><span class="pricing-card__check">✓</span>@feature</li>
+                            }
+                        </ul>
+                        <a class="btn @(plan.Highlighted ? "btn-cta" : "btn-ghost") w-100" asp-controller="Home" asp-action="Contact">@plan.CtaText</a>
+                    </div>
+                </div>
+            }
+        </div>
+        <p class="pricing-note">Prices shown are indicative starting rates and may vary based on scope, content volume, and integrations. Taxes as applicable.</p>
+    </div>
+</section>
+
+<section class="section section--alt">
+    <div class="container">
+        <div class="cta-banner">
+            <div>
+                <p class="tag-label">&lt;custom-quote&gt;</p>
+                <h2 class="cta-banner__title">Bigger project in mind? Let's scope it properly.</h2>
+            </div>
+            <a class="btn btn-cta btn-cta--lg" asp-controller="Home" asp-action="Contact">Request a custom quote</a>
+        </div>
+    </div>
+</section>
