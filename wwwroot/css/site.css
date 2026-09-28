@@ -709,6 +709,14 @@ button {
     gap: 0.75rem;
 }
 
+/* Below 992px the centre nav is hidden, so nothing was pushing the CTA and
+   hamburger to the right and the bar stopped in the middle. */
+@media (max-width: 991.98px) {
+    .site-navbar__actions {
+        margin-left: auto;
+    }
+}
+
 .nav-cta {
     flex: none;
     display: inline-flex;
@@ -751,7 +759,7 @@ button {
     }
 
 @media (max-width: 767.98px) {
-    .nav-cta span {
+    .nav-cta span:not(.nav-cta__icon) {
         display: none;
     }
 
@@ -945,17 +953,21 @@ button {
     }
 
 .mobile-drawer__sublist {
-    display: grid;
-    grid-template-rows: 0fr;
-    transition: grid-template-rows 0.3s var(--ease);
+    /* Closed by default. The old version used a grid with only ONE row
+       defined (0fr) but the links are direct children, so the first link
+       was squashed into that row while the others spilled out below it,
+       which looked like overlapping text. max-height works with any
+       number of links. */
+    max-height: 0;
+    overflow: hidden;
+    visibility: hidden;
+    transition: max-height 0.3s var(--ease), visibility 0s linear 0.3s;
 }
 
-    .mobile-drawer__sublist > * {
-        overflow: hidden;
-    }
-
 .mobile-drawer__group.is-open .mobile-drawer__sublist {
-    grid-template-rows: 1fr;
+    max-height: 400px;
+    visibility: visible;
+    transition: max-height 0.3s var(--ease), visibility 0s;
 }
 
 .mobile-drawer__sublist a {
@@ -1378,6 +1390,11 @@ body.nav-open {
     min-height: clamp(560px, 82vh, 820px);
     display: flex;
     align-items: center;
+    /* The header is position:fixed and takes about 100px (18px top padding +
+       76px bar + 6px bottom padding). On phones the hero content is taller
+       than the screen, so it starts right at the top and the header was
+       drawn on top of the first line. Push the content below the header. */
+    padding-top: calc(var(--header-h) + 24px + 2rem);
 }
 
     .hero--video::before {
@@ -1636,12 +1653,15 @@ body.has-hero-video .site-header:not(.is-scrolled) .nav-toggle {
     color: var(--charcoal);
     opacity: 0;
     transform: translateY(10px);
-    transition: opacity 0.45s var(--ease), transform 0.45s var(--ease);
+    /* old line fades out quickly ... */
+    transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
     .hero-ticker__item.is-active {
         opacity: 1;
         transform: translateY(0);
+        /* ... then the new line fades in, so the two never show together */
+        transition: opacity 0.45s var(--ease) 0.2s, transform 0.45s var(--ease) 0.2s;
     }
 
 @keyframes heroPulse {

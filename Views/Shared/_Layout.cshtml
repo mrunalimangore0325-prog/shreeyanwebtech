@@ -3,8 +3,44 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@(ViewData["Title"] != null ? $"{ViewData["Title"]} · ShreeYaan Webtech" : "ShreeYaan Webtech — Website, Software & Cyber Security Solutions")</title>
-    <meta name="description" content="ShreeYaan Webtech builds websites, special purpose software, and cyber security solutions  — fully customised around your business, not a template." />
+    @{
+        // ---- SEO values used in <head> ----
+        var siteUrl = "https://shreeyaanwebtech.com";
+        var reqPath = (Context.Request.Path.Value ?? "/").TrimEnd('/');
+        if (reqPath == "" || reqPath.Equals("/Home", StringComparison.OrdinalIgnoreCase) || reqPath.Equals("/Home/Index", StringComparison.OrdinalIgnoreCase))
+        {
+            reqPath = "/";
+        }
+        var canonicalUrl = siteUrl + reqPath;
+        var pageTitle = ViewData["FullTitle"] as string
+        ?? (ViewData["Title"] != null
+        ? $"{ViewData["Title"]} · ShreeYaan Webtech"
+        : "ShreeYaan Webtech — Website, Software & Cyber Security Solutions");
+        var pageDescription = ViewData["Description"] as string
+        ?? "ShreeYaan Webtech builds websites, special purpose software, and cyber security solutions — fully customised around your business, not a template.";
+    }
+    <title>@pageTitle</title>
+    <meta name="description" content="@pageDescription" />
+    <link rel="canonical" href="@canonicalUrl" />
+
+    <!-- Open Graph / social sharing -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="ShreeYaan Webtech" />
+    <meta property="og:title" content="@pageTitle" />
+    <meta property="og:description" content="@pageDescription" />
+    <meta property="og:url" content="@canonicalUrl" />
+    <meta name="twitter:card" content="summary" />
+
+    <!-- Structured data: tells Google this site belongs to the ShreeYaan Webtech brand -->
+    <script type="application/ld+json">
+        {
+          "@@context": "https://schema.org",
+          "@@type": "Organization",
+          "name": "ShreeYaan Webtech",
+          "alternateName": "ShreeYaan",
+          "url": "https://shreeyaanwebtech.com/"
+        }
+    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -88,7 +124,7 @@
                             <svg class="site-nav__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
                         </button>
                     </li>
-                    
+
                     <li class="site-nav__item">
                         <a class="site-nav__link" asp-controller="Home" asp-action="Careers">Careers</a>
                     </li>
@@ -131,8 +167,7 @@
                         <a class="nav-panel__link" asp-controller="Home" asp-action="Services">Websites &amp; web apps<span>, custom-built</span></a>
                         <a class="nav-panel__link" asp-controller="Home" asp-action="Services">Cyber security<span>Audits, hardening, response</span></a>
                     </div>
-                  
-                    </div>
+                    <div aria-hidden="true"></div>
                     <div class="nav-panel__aside">
                         <p class="nav-panel__eyebrow">Get in touch</p>
                         <a class="nav-panel__contact" href="mailto:shreeyaanwebtech@gmail.com"><partial name="_Icon" model="@("mail")" />shreeyaanwebtech@gmail.com</a>
@@ -187,7 +222,7 @@
                     <div class="mobile-drawer__sublist" data-accordion-panel="services">
                         <a asp-controller="Home" asp-action="Services">Websites &amp; web apps</a>
                         <a asp-controller="Home" asp-action="Services">Cyber security</a>
-                        
+
                     </div>
                 </li>
 
@@ -202,8 +237,12 @@
             </a>
 
             <ul class="mobile-drawer__contact">
-                <li><a href="mailto:shreeyaanwebtech@gmail.com"><partial name="_Icon" model="@("mail")" /> 
-                     shreeyaanwebtech@gmail.com</a></li>
+                <li>
+                    <a href="mailto:shreeyaanwebtech@gmail.com">
+                        <partial name="_Icon" model="@("mail")" />
+                        shreeyaanwebtech@gmail.com
+                    </a>
+                </li>
                 <li><a href="tel:+91 86249 68613"><partial name="_Icon" model="@("phone")" />+91 86249 68613</a></li>
                 <li><span><partial name="_Icon" model="@("pin")" /> Pune, Maharashtra, India</span></li>
             </ul>
