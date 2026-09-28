@@ -238,7 +238,8 @@ button {
     }
 
 .page-hero {
-    padding-top: clamp(2.75rem, 2rem + 3vw, 5rem);
+    /* Header is position:fixed (~100px tall), so push content below it. */
+    padding-top: calc(var(--header-h) + 24px + 2rem);
     padding-bottom: clamp(2.5rem, 2rem + 2vw, 3.5rem);
     position: relative;
     background: radial-gradient(50% 80% at 90% 0%, var(--electric-100), transparent 65%), radial-gradient(40% 60% at 0% 100%, var(--teal-100), transparent 70%);
@@ -441,8 +442,9 @@ button {
     box-shadow: 0 8px 24px -18px rgba(12, 18, 32, 0.35);
 }
 
-/* Transparent-until-scrolled state, on every page. */
-.site-header:not(.is-scrolled) .site-navbar__row {
+/* Transparent-until-scrolled state, only on pages with the dark video hero.
+   Other pages keep the solid white bar so the logo never overlaps content. */
+body.has-hero-video .site-header:not(.is-scrolled) .site-navbar__row {
     background: transparent;
     box-shadow: none;
 }
