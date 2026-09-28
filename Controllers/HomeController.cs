@@ -34,7 +34,7 @@ namespace Shreeyan.Controllers
 
 
 
-      
+
 
 
 
@@ -188,6 +188,13 @@ namespace Shreeyan.Controllers
             },
             new ServiceItem
             {
+                IconKey = "grid",
+                Title = "ERP Systems",
+                Description = "Custom ERP software that brings your accounts, inventory, sales, and operations into one connected system.",
+                Includes = new() { "Inventory & purchase management", "Sales, billing & invoicing", "Accounts & reporting", "HR, payroll & role-based access" }
+            },
+            new ServiceItem
+            {
                 IconKey = "target",
                 Title = "Meta Ads Management",
                 Description = "Facebook & Instagram ad campaigns built to drive qualified leads and sales, backed by ongoing optimisation.",
@@ -250,6 +257,3 @@ namespace Shreeyan.Controllers
         };
     }
 }
-
-
-
