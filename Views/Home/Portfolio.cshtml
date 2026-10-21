@@ -1,0 +1,75 @@
+﻿@{
+    ViewData["Title"] = "Portfolio";
+    ViewData["Description"] = "Portfolio of ShreeYaan Web Tech: business websites and web applications designed and built in Pune, Maharashtra.";
+}
+
+<section class="section page-hero">
+    <div class="container">
+        <p class="eyebrow">Our work</p>
+        <h1 class="section-title">Websites and web applications we have built.</h1>
+        <p class="section-lead">
+            A look at some of the projects we have designed and developed. Every one is built around
+            the business behind it, not a template.
+        </p>
+    </div>
+</section>
+
+<section class="section pt-0">
+    <div class="container">
+        <div class="row g-4">
+            @* Add more projects by copying one of these blocks. *@
+            <div class="col-md-6 col-lg-4" data-reveal>
+                <div class="service-card" id="shreeyaan-web-tech">
+                    <div class="card-icon"><partial name="_Icon" model="@("code")" /></div>
+                    <h3 class="service-card__title">ShreeYaan Web Tech website</h3>
+                    <p class="service-card__desc">Our own company website: services, careers with a resume upload, and an enquiry form that emails our team.</p>
+                    <ul class="service-card__list">
+                        <li>ASP.NET Core MVC (.NET 8)</li>
+                        <li>Responsive, custom design</li>
+                        <li>Contact &amp; careers forms</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4" data-reveal>
+                <div class="service-card" id="tara-green-energy">
+                    <div class="card-icon"><partial name="_Icon" model="@("spark")" /></div>
+                    <h3 class="service-card__title">Tara Green Energy website</h3>
+                    <p class="service-card__desc">A promotional business website for a solar panel and LED lighting company.</p>
+                    <ul class="service-card__list">
+                        <li>Business website</li>
+                        <li>Solar &amp; LED product showcase</li>
+                        <li>Mobile responsive</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4" data-reveal>
+                <div class="service-card" id="your-project">
+                    <div class="card-icon"><partial name="_Icon" model="@("globe")" /></div>
+                    <h3 class="service-card__title">Your project is next</h3>
+                    <p class="service-card__desc">Websites, web applications and special purpose software, scoped around what your business needs.</p>
+                    <ul class="service-card__list">
+                        <li>Free initial discussion</li>
+                        <li>Clear scope before we start</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section--alt">
+    <div class="container">
+        <div class="cta-banner" data-reveal>
+            <div class="cta-banner__content">
+                <p class="eyebrow eyebrow--dark">Have a project in mind?</p>
+                <h2 class="cta-banner__title">Let's build something great.</h2>
+                <p class="cta-banner__text">Tell us what you're trying to build and we'll reply with a straight answer.</p>
+            </div>
+            <div class="cta-banner__actions">
+                <a class="btn btn-primary btn-lg" asp-controller="Home" asp-action="Contact">Start Your Project</a>
+            </div>
+        </div>
+    </div>
+</section>

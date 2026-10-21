@@ -5,40 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     @{
         // ---- SEO values used in <head> ----
+        // Google chooses the site name, favicon and sitelinks (Services, About Us,
+        // Portfolio, Careers, Contact Us) automatically. Everything below is what
+        // makes the site eligible for that result style.
         var siteUrl = "https://shreeyaanwebtech.com";
-        var reqPath = (Context.Request.Path.Value ?? "/").TrimEnd('/');
-        if (reqPath == "" || reqPath.Equals("/Home", StringComparison.OrdinalIgnoreCase) || reqPath.Equals("/Home/Index", StringComparison.OrdinalIgnoreCase))
-        {
-            reqPath = "/";
-        }
+        var siteName = "ShreeYaan Web Tech";
+        var routeAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "Index";
+        var reqPath = Url.Action(routeAction, "Home") ?? "/";
+        if (reqPath.Length > 1) { reqPath = reqPath.TrimEnd('/'); }
         var canonicalUrl = siteUrl + reqPath;
+        var isHome = routeAction.Equals("Index", StringComparison.OrdinalIgnoreCase);
         var pageTitle = ViewData["FullTitle"] as string
         ?? (ViewData["Title"] != null
-        ? $"{ViewData["Title"]} · ShreeYaan Webtech"
-        : "ShreeYaan Webtech — Website, Software & Cyber Security Solutions");
+        ? $"{ViewData["Title"]} | {siteName}"
+        : siteName);
         var pageDescription = ViewData["Description"] as string
-        ?? "ShreeYaan Webtech builds websites, special purpose software, and cyber security solutions — fully customised around your business, not a template.";
+        ?? "ShreeYaan Web Tech provides website development, custom software, web applications, ERP solutions, automation and cybersecurity services for businesses.";
     }
     <title>@pageTitle</title>
     <meta name="description" content="@pageDescription" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+    <meta name="application-name" content="@siteName" />
+    <meta name="theme-color" content="#0d1424" />
     <link rel="canonical" href="@canonicalUrl" />
+
+    <!-- Favicon set. Google needs a square icon in a multiple of 48px (48, 96, 192...) -->
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 
     <!-- Open Graph / social sharing -->
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="ShreeYaan Webtech" />
+    <meta property="og:site_name" content="@siteName" />
     <meta property="og:title" content="@pageTitle" />
     <meta property="og:description" content="@pageDescription" />
     <meta property="og:url" content="@canonicalUrl" />
+    <meta property="og:image" content="@(siteUrl)/icon-512.png" />
     <meta name="twitter:card" content="summary" />
 
-    <!-- Structured data: tells Google this site belongs to the ShreeYaan Webtech brand -->
+    <!-- Structured data: tells Google the site name, alternate names and logo -->
+    @if (isHome)
+    {
+        <script type="application/ld+json">
+            {
+              "@@context": "https://schema.org",
+              "@@type": "WebSite",
+              "name": "ShreeYaan Web Tech",
+              "alternateName": ["ShreeYaan Webtech", "ShreeYaan"],
+              "url": "https://shreeyaanwebtech.com/"
+            }
+        </script>
+    }
     <script type="application/ld+json">
         {
           "@@context": "https://schema.org",
           "@@type": "Organization",
-          "name": "ShreeYaan Webtech",
-          "alternateName": "ShreeYaan",
-          "url": "https://shreeyaanwebtech.com/"
+          "name": "ShreeYaan Web Tech",
+          "alternateName": ["ShreeYaan Webtech", "ShreeYaan"],
+          "url": "https://shreeyaanwebtech.com/",
+          "logo": "https://shreeyaanwebtech.com/icon-512.png",
+          "description": "Website development, custom software, web applications, ERP solutions, automation and cybersecurity services for businesses.",
+          "email": "shreeyaanwebtech@gmail.com",
+          "telephone": "+91-86249-68613",
+          "address": {
+            "@@type": "PostalAddress",
+            "addressLocality": "Pune",
+            "addressRegion": "Maharashtra",
+            "addressCountry": "IN"
+          }
         }
     </script>
 
@@ -72,7 +108,7 @@
                 <span class="preloader__square preloader__square--b"></span>
                 <span class="preloader__square preloader__square--c"></span>
             </div>
-            <div class="preloader__brand">ShreeYaan<span class="preloader__brand-light">Webtech</span></div>
+            <div class="preloader__brand">ShreeYaan <span class="preloader__brand-light">Web Tech</span></div>
             <div class="preloader__bar"><span class="preloader__bar-fill"></span></div>
             <p class="preloader__label">Loading experience&hellip;</p>
         </div>
@@ -105,28 +141,30 @@
                         <span class="site-brand__square site-brand__square--back"></span>
                         <span class="site-brand__square site-brand__square--front"></span>
                     </span>
-                    <span class="site-brand__text">ShreeYaan<span class="site-brand__text-light">Webtech</span></span>
+                    <span class="site-brand__text">ShreeYaan <span class="site-brand__text-light">Web Tech</span></span>
                 </a>
 
                 <ul class="site-nav" role="navigation" aria-label="Primary">
                     <li class="site-nav__item">
-                        <a class="site-nav__link" asp-controller="Home" asp-action="Index">Home</a>
-                    </li>
-                    <li class="site-nav__item">
-                        <button class="site-nav__link" type="button" data-panel-trigger="about" aria-haspopup="true" aria-expanded="false">
-                            About
-                            <svg class="site-nav__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
-                        </button>
-                    </li>
-                    <li class="site-nav__item">
-                        <button class="site-nav__link" type="button" data-panel-trigger="services" aria-haspopup="true" aria-expanded="false">
+                        <a class="site-nav__link" asp-controller="Home" asp-action="Services" data-panel-trigger="services" aria-haspopup="true" aria-expanded="false">
                             Services
                             <svg class="site-nav__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
-                        </button>
+                        </a>
                     </li>
-
+                    <li class="site-nav__item">
+                        <a class="site-nav__link" asp-controller="Home" asp-action="About" data-panel-trigger="about" aria-haspopup="true" aria-expanded="false">
+                            About Us
+                            <svg class="site-nav__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+                        </a>
+                    </li>
+                    <li class="site-nav__item">
+                        <a class="site-nav__link" asp-controller="Home" asp-action="Portfolio">Portfolio</a>
+                    </li>
                     <li class="site-nav__item">
                         <a class="site-nav__link" asp-controller="Home" asp-action="Careers">Careers</a>
+                    </li>
+                    <li class="site-nav__item">
+                        <a class="site-nav__link" asp-controller="Home" asp-action="Contact">Contact Us</a>
                     </li>
                 </ul>
 
@@ -147,10 +185,11 @@
                     <div>
                         <p class="nav-panel__eyebrow">Company</p>
                         <a class="nav-panel__link" asp-controller="Home" asp-action="About">About us<span>Who we are and what we stand for</span></a>
-                        <a class="nav-panel__link" asp-controller="Home" asp-action="Careers">Careers<span>Open roles at ShreeYaan Webtech</span></a>
+                        <a class="nav-panel__link" asp-controller="Home" asp-action="Careers">Careers<span>Open roles at ShreeYaan Web Tech</span></a>
                     </div>
                     <div>
                         <p class="nav-panel__eyebrow">How we work</p>
+                        <a class="nav-panel__link" asp-controller="Home" asp-action="Portfolio">Portfolio<span>Websites and projects we have built</span></a>
                         <a class="nav-panel__link" asp-controller="Home" asp-action="Companies">Group companies<span>The businesses we work alongside</span></a>
                     </div>
                     <div class="nav-panel__aside">
@@ -166,7 +205,6 @@
                         <p class="nav-panel__eyebrow">What we build</p>
                         <a class="nav-panel__link" asp-controller="Home" asp-action="Services">Websites &amp; web apps<span>, custom-built</span></a>
                         <a class="nav-panel__link" asp-controller="Home" asp-action="Services">Cyber security<span>Audits, hardening, response</span></a>
-                        <a class="nav-panel__link" asp-controller="Home" asp-action="Services" asp-fragment="erp-systems">ERP systems<span>Accounts, inventory, sales &amp; HR in one</span></a>
                     </div>
                     <div aria-hidden="true"></div>
                     <div class="nav-panel__aside">
@@ -193,7 +231,7 @@
                         <span class="site-brand__square site-brand__square--back"></span>
                         <span class="site-brand__square site-brand__square--front"></span>
                     </span>
-                    <span class="site-brand__text" style="color:var(--white);">ShreeYaan<span class="site-brand__text-light">Webtech</span></span>
+                    <span class="site-brand__text" style="color:var(--white);">ShreeYaan <span class="site-brand__text-light">Web Tech</span></span>
                 </a>
                 <button class="mobile-drawer__close" id="mobileDrawerClose" type="button" aria-label="Close menu">
                     <partial name="_Icon" model="@("close")" />
@@ -209,7 +247,7 @@
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
                     </button>
                     <div class="mobile-drawer__sublist" data-accordion-panel="about">
-                        <a asp-controller="Home" asp-action="About">About us</a>
+                        <a asp-controller="Home" asp-action="About">About Us</a>
                         <a asp-controller="Home" asp-action="Careers">Careers</a>
                         <a asp-controller="Home" asp-action="Companies">Group companies</a>
                     </div>
@@ -223,14 +261,13 @@
                     <div class="mobile-drawer__sublist" data-accordion-panel="services">
                         <a asp-controller="Home" asp-action="Services">Websites &amp; web apps</a>
                         <a asp-controller="Home" asp-action="Services">Cyber security</a>
-                        <a asp-controller="Home" asp-action="Services" asp-fragment="erp-systems">ERP systems</a>
 
                     </div>
                 </li>
 
                 <li><a asp-controller="Home" asp-action="Portfolio">Portfolio</a></li>
                 <li><a asp-controller="Home" asp-action="Careers">Careers</a></li>
-                <li><a asp-controller="Home" asp-action="Contact">Contact</a></li>
+                <li><a asp-controller="Home" asp-action="Contact">Contact Us</a></li>
             </ul>
 
             <a class="mobile-drawer__cta" asp-controller="Home" asp-action="Contact">
@@ -264,7 +301,7 @@
                             <span class="site-brand__square site-brand__square--back"></span>
                             <span class="site-brand__square site-brand__square--front"></span>
                         </span>
-                        <span class="site-brand__text">ShreeYaan<span class="site-brand__text-light">Webtech</span></span>
+                        <span class="site-brand__text">ShreeYaan <span class="site-brand__text-light">Web Tech</span></span>
                     </a>
                     <p class="footer-tagline">
                         We design and build modern websites and web applications —
@@ -279,7 +316,7 @@
 
                         <li><a asp-controller="Home" asp-action="Portfolio">Portfolio</a></li>
                         <li><a asp-controller="Home" asp-action="Careers">Careers</a></li>
-                        <li><a asp-controller="Home" asp-action="Contact">Contact</a></li>
+                        <li><a asp-controller="Home" asp-action="Contact">Contact Us</a></li>
                     </ul>
                 </div>
 
@@ -290,7 +327,6 @@
                         <li><a asp-controller="Home" asp-action="Services">Custom Web Applications</a></li>
                         <li><a asp-controller="Home" asp-action="Services">Cyber Security Solutions</a></li>
                         <li><a asp-controller="Home" asp-action="Services">Special Purpose Software</a></li>
-                        <li><a asp-controller="Home" asp-action="Services" asp-fragment="erp-systems">ERP Systems</a></li>
                     </ul>
                 </div>
 
@@ -321,7 +357,7 @@
             </div>
 
             <div class="footer-bottom">
-                <span>© @DateTime.Now.Year ShreeYaan Webtech. All rights reserved.</span>
+                <span>© @DateTime.Now.Year ShreeYaan Web Tech. All rights reserved.</span>
                 <div class="footer-bottom__links">
                     <a asp-controller="Home" asp-action="Privacy">Privacy Policy</a>
                     <a asp-controller="Home" asp-action="Privacy">Terms &amp; Conditions</a>

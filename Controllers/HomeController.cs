@@ -31,6 +31,11 @@ namespace Shreeyan.Controllers
             return View(GetServices());
         }
 
+        public IActionResult Portfolio()
+        {
+            return View();
+        }
+
 
 
 
@@ -185,13 +190,6 @@ namespace Shreeyan.Controllers
                 Title = "Special Purpose Software",
                 Description = "Purpose-built software and automation for workflows that off-the-shelf tools can't handle.",
                 Includes = new() { "Custom automation", "Industry-specific tools", "Process digitisation", "Full customisation" }
-            },
-            new ServiceItem
-            {
-                IconKey = "grid",
-                Title = "ERP Systems",
-                Description = "Custom ERP software that brings your accounts, inventory, sales, and operations into one connected system.",
-                Includes = new() { "Inventory & purchase management", "Sales, billing & invoicing", "Accounts & reporting", "HR, payroll & role-based access" }
             },
             new ServiceItem
             {
