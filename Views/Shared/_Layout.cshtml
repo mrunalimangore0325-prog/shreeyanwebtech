@@ -29,12 +29,14 @@
     <meta name="theme-color" content="#0d1424" />
     <link rel="canonical" href="@canonicalUrl" />
 
-    <!-- Favicon set. Google needs a square icon in a multiple of 48px (48, 96, 192...) -->
-    <link rel="icon" href="/favicon.ico" sizes="any" />
-    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
-    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
-    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <!-- Favicon set. Google needs a square icon in a multiple of 48px (48, 96, 192...).
+         asp-append-version adds a content hash (?v=...) so browsers and Google
+         fetch the new logo whenever the file changes. -->
+    <link rel="icon" href="~/favicon.ico" sizes="any" asp-append-version="true" />
+    <link rel="icon" type="image/png" sizes="48x48" href="~/favicon-48x48.png" asp-append-version="true" />
+    <link rel="icon" type="image/png" sizes="96x96" href="~/favicon-96x96.png" asp-append-version="true" />
+    <link rel="icon" type="image/png" sizes="192x192" href="~/icon-192.png" asp-append-version="true" />
+    <link rel="apple-touch-icon" sizes="180x180" href="~/apple-touch-icon.png" asp-append-version="true" />
 
     <!-- Open Graph / social sharing -->
     <meta property="og:type" content="website" />
